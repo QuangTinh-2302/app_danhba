@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:app_qly_danhba/model/contacts.dart';
 import 'package:app_qly_danhba/ui/themscreen.dart';
 import 'package:app_qly_danhba/model/url.dart';
+import 'package:app_qly_danhba/ui/contact_detail.dart';
 void main() {
   runApp(MaterialApp(home: MyApp(),debugShowCheckedModeBanner: false,));
 }
@@ -82,6 +83,14 @@ class DanhBaState extends State<MyApp>{
                   final contact = _filteredContacts[index];
                   return ListTile(
                     title:Text(contact.name),
+                    onTap:() {Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) => ContactDetail(
+                              ct: contact
+                          )
+                        )
+                      );
+                    },
                     subtitle: Text(contact.phone),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,

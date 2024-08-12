@@ -1,3 +1,4 @@
+import 'package:app_qly_danhba/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class _ThemscreenState extends State<Themscreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thêm Danh Bạ'),
-        backgroundColor: Colors.blue,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -69,7 +70,12 @@ class _ThemscreenState extends State<Themscreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue
+                  backgroundColor: Colors.blueGrey,
+                  elevation: 8,
+                  shadowColor: Colors.grey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30), // Góc bo tròn của nút
+                  ),
                 ),
                 child: Text(widget.contact == null ? 'Thêm' : 'Cập nhập',style: TextStyle(fontSize: 20,color: Colors.black),),
               ),
@@ -135,7 +141,7 @@ class _ThemscreenState extends State<Themscreen> {
     };
     var reponse = await http.post(Url.url_update,headers:{"Content-Type":"application/json"},body:json.encode(data));
     if (reponse.statusCode == 200) {
-      Navigator.pop(context,true);
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MyApp()));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sửa thành công',),
