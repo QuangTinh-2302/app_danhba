@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:app_qly_danhba/model/contacts.dart';
 import 'package:app_qly_danhba/model/url.dart';
+import 'package:flutter/services.dart';
 
 class Themscreen extends StatefulWidget {
   final Contacts? contact; // Thêm thuộc tính contact, có thể null
@@ -17,6 +18,7 @@ class _ThemscreenState extends State<Themscreen> {
   late TextEditingController _phoneController;
   @override
   void initState() {
+    super.initState();
     _nameController = TextEditingController(text: widget.contact?.name ?? '');
     _phoneController = TextEditingController(text: widget.contact?.phone ?? '');
   }
@@ -43,6 +45,11 @@ class _ThemscreenState extends State<Themscreen> {
             const SizedBox(height: 20.0),
             TextField(
               controller: _phoneController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly, // Chỉ cho phép nhập số
+                LengthLimitingTextInputFormatter(15),   // Giới hạn tối đa 15 ký tự
+              ],
               decoration: InputDecoration(
                 labelText: 'Số Điện Thoại',
                 border: OutlineInputBorder(
@@ -77,7 +84,11 @@ class _ThemscreenState extends State<Themscreen> {
     final phone = _phoneController.text;
     if (name.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
+          const SnackBar(
+            content: Text('Vui lòng nhập đủ thông tin',),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          )
       );
       return;
     }
@@ -85,18 +96,17 @@ class _ThemscreenState extends State<Themscreen> {
       'name': name,
       'phone': phone,
     };
-    var response = await http.post(
-      Url.url_add,
-      headers: {"Content-Type": "application/json"},
-      body: json.encode(data),
-    );
-
+    var response = await http.post(Url.url_add, headers: {"Content-Type": "application/json"}, body: json.encode(data),);
     if (response.statusCode == 200) {
       final newContact = Contacts(null,name, phone);
       Navigator.pop(context, newContact);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Thêm không thành công')),
+          const SnackBar(
+            content: Text('Thêm không thành công',),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          )
       );
     }
   }
@@ -110,7 +120,11 @@ class _ThemscreenState extends State<Themscreen> {
         _phoneController.text);
     if (name.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
+          const SnackBar(
+            content: Text('Vui lòng nhập đủ thông tin',),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          )
       );
       return;
     }
@@ -122,9 +136,20 @@ class _ThemscreenState extends State<Themscreen> {
     var reponse = await http.post(Url.url_update,headers:{"Content-Type":"application/json"},body:json.encode(data));
     if (reponse.statusCode == 200) {
       Navigator.pop(context,true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sửa thành công',),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        )
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sửa không thành công')),
+        const SnackBar(
+          content: Text('Sửa không thành công'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
