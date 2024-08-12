@@ -105,7 +105,11 @@ class _ContactDetailState extends State<ContactDetail> {
     } else {
       // Hiển thị thông báo lỗi nếu không thể mở ứng dụng nhắn tin
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể gửi tin nhắn đến $phoneNumber')),
+        SnackBar(
+          content: Text('Không thể gửi tin nhắn đến $phoneNumber'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -119,7 +123,11 @@ class _ContactDetailState extends State<ContactDetail> {
     } else {
       // Hiển thị thông báo lỗi nếu không thể mở ứng dụng gọi điện thoại
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Không thể gọi điện thoại đến $phoneNumber')),
+        SnackBar(
+          content: Text('Không thể gửi tin nhắn đến $phoneNumber'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
