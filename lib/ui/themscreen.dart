@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:app_qly_danhba/model/contacts.dart';
 import 'package:app_qly_danhba/model/url.dart';
 import 'package:flutter/services.dart';
+import 'package:app_qly_danhba/ui/home.dart';
 
 class Themscreen extends StatefulWidget {
   final Contacts? contact; // Thêm thuộc tính contact, có thể null
@@ -77,7 +78,7 @@ class _ThemscreenState extends State<Themscreen> {
                     borderRadius: BorderRadius.circular(30), // Góc bo tròn của nút
                   ),
                 ),
-                child: Text(widget.contact == null ? 'Thêm' : 'Cập nhập',style: TextStyle(fontSize: 20,color: Colors.black),),
+                child: Text(widget.contact == null ? 'Thêm' : 'Cập nhập',style: const TextStyle(fontSize: 20,color: Colors.black),),
               ),
             ),
           ],
@@ -141,7 +142,7 @@ class _ThemscreenState extends State<Themscreen> {
     };
     var reponse = await http.post(Url.url_update,headers:{"Content-Type":"application/json"},body:json.encode(data));
     if (reponse.statusCode == 200) {
-      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MyApp()));
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const MyApp()));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Sửa thành công',),
