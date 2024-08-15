@@ -6,6 +6,7 @@ import 'package:app_qly_danhba/ui/themscreen.dart';
 import 'package:app_qly_danhba/model/url.dart';
 import 'package:app_qly_danhba/ui/contact_detail.dart';
 import 'package:app_qly_danhba/main.dart';
+import 'package:app_qly_danhba/model_view/contactservice.dart';
 class MyApp extends StatefulWidget{
   const MyApp({super.key});
   @override
@@ -46,6 +47,7 @@ class DanhBaState extends State<MyApp>{
           appBar: AppBar(
             title: const Text('Danh Bạ',style: TextStyle(fontSize: 30),),
             centerTitle: true,
+            automaticallyImplyLeading: false,
             actions: [
               IconButton(
                 onPressed:(){
@@ -139,8 +141,12 @@ class DanhBaState extends State<MyApp>{
                                       ),
                                       TextButton(
                                         onPressed: () async{
-                                          await _Delete(index);
+                                          await Contactservice(context).Delete(
+                                              _filteredContacts[index].id as int,
+                                              _filteredContacts[index].name,
+                                              _filteredContacts[index].phone);
                                           setState(() {
+                                            _GetData();
                                             _filterContacts();
                                             _filteredContacts.removeAt(index);
                                           });
@@ -162,13 +168,10 @@ class DanhBaState extends State<MyApp>{
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed:  ()async{
-              final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => Themscreen()));
-              if(result != null){
-                setState(() {
-                  _GetData();
-                });
-              }
+            onPressed:  (){Navigator.push(context, MaterialPageRoute(builder: (context) => Themscreen()));
+              setState(() {
+                _GetData();
+              });
             },
             elevation: 10,
             child: const Icon(Icons.add,size: 30,),
@@ -188,34 +191,6 @@ class DanhBaState extends State<MyApp>{
       });
     }else{
       print('Request failed');
-    }
-  }
-  Future<void> _Delete(int index) async{
-    final id = _filteredContacts[index].id;
-    final name = _filteredContacts[index].name;
-    final phone = _filteredContacts[index].phone;
-    var data = {
-      'id': id,
-      'name': name,
-      'phone': phone,
-    };
-    var deleterepose = await http.post(Url.url_delete,headers:{"Content-Type":"application/json"},body:json.encode(data));
-    if (deleterepose.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Xóa thành công $name'),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Xóa không thành công'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          )
-      );
     }
   }
 }
