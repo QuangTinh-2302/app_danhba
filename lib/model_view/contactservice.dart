@@ -7,18 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 class Contactservice with ChangeNotifier {
   final BuildContext context;
   Contactservice(this.context);
-  // Future<void> GetData() async{
-  //   List<Contacts> _listdanhba = [];
-  //   var reponse = await http.get(Url.Url_getdata);
-  //   if(reponse.statusCode == 200){
-  //     var jsonReponse = jsonDecode(reponse.body);
-  //       _listdanhba = (jsonReponse as List)
-  //           .map((jsonOb) => Contacts.fromJson(jsonOb))
-  //           .toList();
-  //   }else{
-  //     print('Request failed');
-  //   }
-  // }
   Future<void> Delete(int id, String name, String phone) async{
     var data = {
       'id': id,
