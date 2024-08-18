@@ -1,7 +1,6 @@
 import 'package:app_qly_danhba/ui/home.dart';
 import 'package:flutter/material.dart';
 import 'package:app_qly_danhba/model/contacts.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:app_qly_danhba/ui/themscreen.dart';
 import 'package:app_qly_danhba/model_view/contactservice.dart';
 class ContactDetail extends StatefulWidget {
@@ -13,8 +12,10 @@ class ContactDetail extends StatefulWidget {
 class _ContactDetailState extends State<ContactDetail> {
   @override
   Widget build(BuildContext context) {
+    final int id = widget.ct!.id as int;
     final String phone = widget.ct!.phone;
     final String name = widget.ct!.name;
+    final bool status = widget.ct!.status;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
@@ -130,29 +131,34 @@ class _ContactDetailState extends State<ContactDetail> {
                       padding: EdgeInsets.all(15.0),
                       child: GestureDetector(
                         onTap: (){
-                          showDialog(
-                            context: context,
-                            builder:(BuildContext) => AlertDialog(
-                              title: const Text('Chặn liên hệ'),
-                              content: const Text('Bạn có chắc muốn chặn liên hệ này không?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('Hủy'),
-                                ),
-                                TextButton(
-                                  onPressed: (){
-                                    Navigator.pushReplacement(
-                                        context, MaterialPageRoute(builder: (context)=> MyApp())
-                                    );
-                                  },
-                                  child: const Text('Chặn', style: TextStyle(color: Colors.red)),
-                                ),
-                              ],
-                            )
-                          );
+                          if(status == true){
+                            showDialog(
+                                context: context,
+                                builder:(BuildContext) => AlertDialog(
+                                  title: const Text('Chặn liên hệ'),
+                                  content: const Text('Bạn có chắc muốn chặn liên hệ này không?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Hủy'),
+                                    ),
+                                    TextButton(
+                                      onPressed: (){
+                                        Contactservice(context).BlockContact(widget.ct!.id as int,false);
+                                        Navigator.pushReplacement(
+                                            context, MaterialPageRoute(builder: (context)=> MyApp())
+                                        );
+                                      },
+                                      child: const Text('Chặn', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                )
+                            );
+                          }else{
+                            Contactservice(context).BlockContact(id, true);
+                          }
                         },
-                        child: const Text('Chặn',style: TextStyle(fontSize: 20,color: Colors.red),),
+                        child: Text(status == true? 'Chặn' : 'Bỏ Chặn',style: TextStyle(fontSize: 20,color: Colors.red),),
                       ),
                     )
                   ],
@@ -166,4 +172,3 @@ class _ContactDetailState extends State<ContactDetail> {
     );
   }
 }
-

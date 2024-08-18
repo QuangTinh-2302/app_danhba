@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:app_qly_danhba/model/contacts.dart';
-import 'package:app_qly_danhba/ui/themscreen.dart';
-import 'package:app_qly_danhba/model/url.dart';
-import 'package:app_qly_danhba/ui/contact_detail.dart';
 import 'package:app_qly_danhba/ui/home.dart';
 void main() {
   runApp(MaterialApp(home: Login(),debugShowCheckedModeBanner: false,));

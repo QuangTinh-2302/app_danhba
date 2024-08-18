@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:app_qly_danhba/model/url.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:app_qly_danhba/model/contacts.dart';
 import 'package:app_qly_danhba/ui/home.dart';
 import 'package:url_launcher/url_launcher.dart';
 class Contactservice with ChangeNotifier {
@@ -60,9 +59,8 @@ class Contactservice with ChangeNotifier {
       'name': name,
       'phone': phone,
     };
-    var response = await http.post(Url.url_add, headers: {"Content-Type": "application/json"}, body: json.encode(data),);
+    var response = await http.post(Url.url_add, headers: {"Content-Type": "application/json",}, body: json.encode(data),);
     if (response.statusCode == 200) {
-      final newContact = Contacts(null,name, phone);
       Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) => MyApp()));
     } else {
@@ -76,7 +74,6 @@ class Contactservice with ChangeNotifier {
     }
   }
   Future<void> updateContact(int id, String name, String phone) async{
-    Contacts newContact = Contacts(id,name,phone);
     if (name.isEmpty || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -88,7 +85,7 @@ class Contactservice with ChangeNotifier {
       return;
     }
     var data = {
-      'id': newContact.id,
+      'id': id,
       'name': name,
       'phone': phone,
     };
@@ -142,6 +139,31 @@ class Contactservice with ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Không thể gửi tin nhắn đến $phoneNumber'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+  Future<void> BlockContact(int id, bool status) async{
+    var data = {
+      'id' : id,
+      'status' : status
+    };
+    var reponse = await http.post(Url.url_block,headers: {"Content-Type":"application/json"},body: json.encode(data));
+    if (reponse.statusCode == 200) {
+      Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const MyApp()));
+      ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: Text(status ? 'Đã bỏ chặn thành công' : 'Đã chặn thành công',),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          )
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Chặn không thành công'),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
         ),

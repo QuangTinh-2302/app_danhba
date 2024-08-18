@@ -5,17 +5,16 @@ import 'package:app_qly_danhba/model/contacts.dart';
 import 'package:app_qly_danhba/ui/themscreen.dart';
 import 'package:app_qly_danhba/model/url.dart';
 import 'package:app_qly_danhba/ui/contact_detail.dart';
-import 'package:app_qly_danhba/main.dart';
+import 'package:app_qly_danhba/ui/home.dart';
 import 'package:app_qly_danhba/model_view/contactservice.dart';
-import 'package:app_qly_danhba/ui/block_contacts.dart';
-class MyApp extends StatefulWidget{
-  const MyApp({super.key});
+class BlockContacts extends StatefulWidget{
+  const BlockContacts({super.key});
   @override
   State<StatefulWidget> createState() {
-    return DanhBaState();
+    return _BlockContacts();
   }
 }
-class DanhBaState extends State<MyApp>{
+class _BlockContacts extends State<BlockContacts>{
   List<Contacts> _listdanhba = [];
   final TextEditingController _searchcontroller = TextEditingController();
   List<Contacts> _filteredContacts = [];
@@ -45,44 +44,31 @@ class DanhBaState extends State<MyApp>{
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Danh Bạ',style: TextStyle(fontSize: 30),),
-            centerTitle: true,
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-                onPressed:(){
-                  Navigator.pushReplacement(
-                      context,MaterialPageRoute(
-                      builder: (context) => Login()
-                  )
-                  );
-                },
-                icon: Icon(Icons.logout)
+          appBar:  AppBar(
+            title: GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context)=>MyApp())
+                );
+              },
+              child: const Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Icon(Icons.arrow_back,),
+                  SizedBox(width: 4,),
+                  Flexible(
+                    child: Text('Back',
+                      style: TextStyle(fontSize: 20,decoration: TextDecoration.underline),
+                      overflow: TextOverflow.ellipsis,),
+                  ),
+                ],
+              ),
             ),
-            actions: [
-              PopupMenuButton<String>(
-                onSelected: (String value) {
-                  if(value == 'option1'){
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context)=>BlockContacts())
-                    );
-                  }
-                },
-                itemBuilder: (BuildContext context){
-                  return [
-                    const PopupMenuItem(
-                      child: Text('Danh sách đã chặn'),
-                      value: 'option1',
-                    )
-                  ];
-                },
-                icon: const Icon(Icons.more_vert)
-              )
-            ]
+            automaticallyImplyLeading: false,
           ),
           body: _listdanhba.isEmpty ?
           const Center(
-              child: CircularProgressIndicator()
+              child: Text('Không có liên hệ')
           ) :
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -117,36 +103,17 @@ class DanhBaState extends State<MyApp>{
                           FocusScope.of(context).unfocus(); //đóng bàn phím
                           await Future.delayed(Duration(milliseconds: 100)); // Chờ một chút để bàn phím đóng hoàn toàn
                           Navigator.push(context,
-                            MaterialPageRoute(
-                                builder: (context) => ContactDetail(
-                                    ct: contact
-                                )
-                            )
-                        );
+                              MaterialPageRoute(
+                                  builder: (context) => ContactDetail(
+                                      ct: contact
+                                  )
+                              )
+                          );
                         },
                         subtitle: Text(contact.phone),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () {// Xử lý sự kiện sửa
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Themscreen(
-                                      contact: contact, // truyền contact để sửa
-                                    ),
-                                  ),
-                                ).then((value) {
-                                  if (value == true) {
-                                    setState(() {
-                                      _GetData();
-                                    });
-                                  }
-                                });
-                              },
-                            ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
@@ -191,9 +158,9 @@ class DanhBaState extends State<MyApp>{
           ),
           floatingActionButton: FloatingActionButton(
             onPressed:  (){Navigator.push(context, MaterialPageRoute(builder: (context) => Themscreen()));
-              setState(() {
-                _GetData();
-              });
+            setState(() {
+              _GetData();
+            });
             },
             elevation: 10,
             child: const Icon(Icons.add,size: 30,),
@@ -202,11 +169,13 @@ class DanhBaState extends State<MyApp>{
     );
   }
   Future<void> _GetData() async{
-    var reponse = await http.get(Url.Url_getdata);
+    var reponse = await http.get(Url.Url_getblockdata);
     if(reponse.statusCode == 200){
-      var jsonReponse = jsonDecode(reponse.body) as List;
+      var jsonReponse = jsonDecode(reponse.body);
       setState(() {
-        _listdanhba = jsonReponse.map((jsonOb) => Contacts.fromJson(jsonOb)).toList();
+        _listdanhba = (jsonReponse as List)
+            .map((jsonOb) => Contacts.fromJson(jsonOb))
+            .toList();
         _filterContacts();
       });
     }else{
